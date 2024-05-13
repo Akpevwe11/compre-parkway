@@ -1,0 +1,29 @@
+{
+    "name": "stanliwise/compre-parkway",
+    "description": "This package is an implementation of compreFace Image Services on Parkway Projects MicroServices",
+    "autoload": {
+        "psr-4": {
+            "Stanliwise\\CompreParkway\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Aloh Stanley"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require-dev": {
+        "phpunit/phpunit": "9.6.x-dev",
+        "mockery/mockery": "1.7.x-dev"
+    },
+    "require": {
+        "aws/aws-sdk-php": "3.306.0",
+        "laravel/framework": "8.75",
+        "fakerphp/faker": "2.0.x-dev"
+    }
+}
