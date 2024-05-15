@@ -19,9 +19,9 @@ return new class extends Migration
             $table->boolean('is_primary');
             $table->string('image_uuid')->unique('image_uuid');
             $table->json('response_payload')->index('response_payload');
-            $table->string('image_path', 200);
+            $table->string('image_path')->nullable();
             $table->string('provider');
-            $table->string('storage_driver')->default('local');
+            $table->string('storage_driver')->nullable();
             $table->string('similarity_score')->nullable();
             $table->softDeletes();
             $table->timestamps();

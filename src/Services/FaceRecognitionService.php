@@ -47,7 +47,7 @@ class FaceRecognitionService extends BaseService
         return $this->handleFaceHttpResponse($response);
     }
 
-    public function remove(string $image_uuid)
+    public function removeFace(string $image_uuid)
     {
         $response = $this->getHttpClient()->delete('/api/v1/recognition/faces?' . http_build_query([
             'image_id' => $image_uuid,

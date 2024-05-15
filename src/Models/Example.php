@@ -12,6 +12,10 @@ class Example extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'response_payload' => 'array'
+    ];
+
     /** 
      * @return \Stanliwise\CompreParkway\Contract\Subject
      */

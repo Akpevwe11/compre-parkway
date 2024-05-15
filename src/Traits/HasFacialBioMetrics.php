@@ -19,7 +19,7 @@ trait HasFacialBiometrics
 
     public function primaryExample()
     {
-        return $this->morphOne(Example::class, 'exampleable');
+        return $this->morphOne(Example::class, 'exampleable')->where('is_primary', true);
     }
 
     public function examples()

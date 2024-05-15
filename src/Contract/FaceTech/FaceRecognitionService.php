@@ -15,7 +15,7 @@ interface FaceRecognitionService
 
     public function removeAll(Subject $subject);
 
-    public function remove(string $image_uuid);
+    public function removeFace(string $image_uuid);
 
     public function addImageBase64(Subject $subject, string $file);
 
