@@ -5,6 +5,7 @@ namespace Tests\App\Providers;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use Stanliwise\CompreParkway\CompreFaceServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {

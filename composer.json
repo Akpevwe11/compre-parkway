@@ -23,7 +23,14 @@
     },
     "require": {
         "aws/aws-sdk-php": "3.306.0",
-        "laravel/framework": "8.75",
+        "laravel/framework": "^8.75",
         "fakerphp/faker": "^1.22"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Stanliwise\\CompreParkway\\CompreFaceServiceProvider"
+            ]
+        }
     }
 }

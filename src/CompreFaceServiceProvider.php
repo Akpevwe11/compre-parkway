@@ -14,6 +14,8 @@ use Stanliwise\CompreParkway\Services\ParkwayFaceTechService;
 class CompreFaceServiceProvider extends ServiceProvider
 {
 
+    protected static $shouldMigrate = true;
+
     public function register()
     {
         if (!app()->configurationIsCached()) {
@@ -34,7 +36,13 @@ class CompreFaceServiceProvider extends ServiceProvider
         if (app()->runningInConsole()) {
             $this->publishes([__DIR__ . '/config/compreFace.php' => config_path('compreFace.php')], 'compreface-config');
 
-            return $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+            if (self::$shouldMigrate)
+                return $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
         }
+    }
+
+    public static function ignoreMigrations()
+    {
+        self::$shouldMigrate = false;
     }
 }
