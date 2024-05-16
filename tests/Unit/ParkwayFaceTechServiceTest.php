@@ -51,4 +51,9 @@ class ParkwayFaceTechServiceTest extends TestCase
 
         $this->assertDatabaseCount('examples', 2);
     }
+    public function test_same_user_face_can_be_compared()
+    {
+        $response = (new ParkwayFaceTechService())->compareTwoFileImages(new ImageFile(base_path("Images/2.png")), new ImageFile(base_path("Images/8.jpg")));
+        $this->assertIsArray($response);
+    }
 }

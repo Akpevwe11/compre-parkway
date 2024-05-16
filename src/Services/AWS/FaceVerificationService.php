@@ -2,7 +2,9 @@
 
 namespace Stanliwise\CompreParkway\Services\AWS;
 
+use Aws\Rekognition\Exception\RekognitionException;
 use Exception;
+use GuzzleHttp\Psr7\Response;
 use Stanliwise\CompreParkway\Contract\FaceTech\FaceVerificationService as FaceTechFaceVerificationService;
 use Stanliwise\CompreParkway\Contract\File;
 use Stanliwise\CompreParkway\Exceptions\FaceDoesNotMatch;
@@ -36,6 +38,8 @@ class FaceVerificationService extends BaseService implements FaceTechFaceVerific
 
     public function compareTwoFileImages(File $source_image, File $target_image)
     {
+        (new FaceDetectionService)->detectFileImage($source_image);
+
         $response = $this->getHttpClient()->compareFaces([
             'SimilarityThreshold' => (config('compreFace.trust_threshold') * 100),
             'SourceImage' => [
@@ -45,7 +49,6 @@ class FaceVerificationService extends BaseService implements FaceTechFaceVerific
                 'Bytes' => $target_image->getContent(),
             ]
         ]);
-
         return $this->handleHttpResponse($response);
     }
 
