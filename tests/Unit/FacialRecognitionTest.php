@@ -11,6 +11,7 @@ use Stanliwise\CompreParkway\Adaptors\AwsFacialAdaptor;
 use Stanliwise\CompreParkway\Adaptors\File\ImageFile;
 use Stanliwise\CompreParkway\Exceptions\FaceDoesNotMatch;
 use Stanliwise\CompreParkway\Exceptions\NoFaceWasDetected;
+use Stanliwise\CompreParkway\Facade\FaceTech;
 use Stanliwise\CompreParkway\Services\ParkwayFaceTechService;
 use Tests\App\Models\User;
 use Tests\TestCase;
@@ -24,7 +25,7 @@ class FacialRecognitionTest extends TestCase
         /** @var \Tests\App\Models\User */
         $user = User::factory()->create();
 
-        $response = ParkwayFaceTechService::driver(AwsFacialAdaptor::class)->facialRecognitionService()->enrollSubject($user);
+        $response = FaceTech::enrollSubject($user);
 
         $this->assertTrue($response);
     }
@@ -34,8 +35,7 @@ class FacialRecognitionTest extends TestCase
         /** @var \Tests\App\Models\User */
         $user = User::factory()->create();
 
-        $response = ParkwayFaceTechService::driver(AwsFacialAdaptor::class)
-            ->facialRecognitionService()
+        $response = FaceTech::getFacialRecognitionService()
             ->addImage($user, new ImageFile(base_path('Images/1.png')));
 
         $this->assertIsArray($response);
@@ -51,7 +51,7 @@ class FacialRecognitionTest extends TestCase
         $user = User::factory()->create();
 
         /** @var \Stanliwise\CompreParkway\Services\AWS\FaceRecognitionService */
-        $service = ParkwayFaceTechService::driver(AwsFacialAdaptor::class)->facialRecognitionService();
+        $service = FaceTech::getFacialRecognitionService();
 
         $service->getHttpClient()->getHandlerList()->setHandler(function (CommandInterface $cmd, RequestInterface $request) use ($mock_payload) {
             $result = new Result(json_decode($mock_payload, true));
@@ -76,7 +76,7 @@ class FacialRecognitionTest extends TestCase
         $user = User::factory()->create();
 
         /** @var \Stanliwise\CompreParkway\Services\AWS\FaceRecognitionService */
-        $service = ParkwayFaceTechService::driver(AwsFacialAdaptor::class)->facialRecognitionService();
+        $service = FaceTech::getFacialRecognitionService();
 
         $service->getHttpClient()->getHandlerList()->setHandler(function (CommandInterface $cmd, RequestInterface $request) use ($mock_payload, $mock_payload2) {
             $mock_to_use = str_contains($request->getBody()->__toString(), 'ExternalImageId') ? $mock_payload : $mock_payload2;
@@ -98,7 +98,7 @@ class FacialRecognitionTest extends TestCase
         $user = User::factory()->create();
 
         /** @var \Stanliwise\CompreParkway\Services\AWS\FaceRecognitionService */
-        $service = ParkwayFaceTechService::driver(AwsFacialAdaptor::class)->facialRecognitionService();
+        $service = FaceTech::getFacialRecognitionService();
 
         $service->getHttpClient()->getHandlerList()->setHandler(function (CommandInterface $cmd, RequestInterface $request) use ($mock_payload, $mock_payload2) {
             $mock_to_use = str_contains($request->getBody()->__toString(), 'ExternalImageId') ? $mock_payload : $mock_payload2;
@@ -115,7 +115,7 @@ class FacialRecognitionTest extends TestCase
     {
 
         /** @var \Stanliwise\CompreParkway\Services\AWS\FaceRecognitionService */
-        $service = ParkwayFaceTechService::driver(AwsFacialAdaptor::class)->facialRecognitionService();
+        $service = FaceTech::getFacialRecognitionService();
 
         $service->listUsers();
     }
@@ -129,10 +129,7 @@ class FacialRecognitionTest extends TestCase
         /** @var \Tests\App\Models\User */
         $user = User::factory()->create();
 
-        /** @var \Stanliwise\CompreParkway\Services\AWS\FaceRecognitionService */
-        $service = ParkwayFaceTechService::driver(AwsFacialAdaptor::class)->facialRecognitionService();
-
-        $service->listFaces();
+        FaceTech::listFaces();
     }
 
     public function test_remove_face()
@@ -140,10 +137,6 @@ class FacialRecognitionTest extends TestCase
 
         $mock_payload = '{"DeletedFaces":["9179010f-4a89-4079-8a2b-32b9036cc5f9"],"UnsuccessfulFaceDeletions":[],"@metadata":{"statusCode":200,"effectiveUri":"https:\/\/rekognition.us-east-1.amazonaws.com","headers":{"x-amzn-requestid":"374134c8-ab2a-4605-98ef-1fe68a77bbc1","content-type":"application\/x-amz-json-1.1","content-length":"88","date":"Wed, 15 May 2024 01:12:01 GMT"},"transferStats":[]}}';
 
-
-        /** @var \Stanliwise\CompreParkway\Services\AWS\FaceRecognitionService */
-        $service = ParkwayFaceTechService::driver(AwsFacialAdaptor::class)->facialRecognitionService();
-
-        $service->removeFace('9179010f-4a89-4079-8a2b-32b9036cc5f9');
+        FaceTech::removeFace('9179010f-4a89-4079-8a2b-32b9036cc5f9');
     }
 }

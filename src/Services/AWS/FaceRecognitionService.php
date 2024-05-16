@@ -2,6 +2,7 @@
 
 namespace Stanliwise\CompreParkway\Services\AWS;
 
+use Stanliwise\CompreParkway\Adaptors\File\Base64File;
 use Stanliwise\CompreParkway\Contract\FaceTech\FaceRecognitionService as FaceTechFaceRecognitionService;
 use Stanliwise\CompreParkway\Contract\File;
 use Stanliwise\CompreParkway\Contract\Subject;
@@ -110,7 +111,7 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
         return $faceDetails + ["image_uuid" => $face_id, 'similarity_threshold' => $similarity_threshold];
     }
 
-    public function addImageBase64(Subject $subject, string $file)
+    public function addImageBase64(Subject $subject, Base64File $file)
     {
     }
 
@@ -123,7 +124,7 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
         ]);
     }
 
-    public function removeFace(string $image_uuid)
+    public function removeImage(string $image_uuid)
     {
         $response = $this->getHttpClient()->deleteFaces([
             "CollectionId" => config('compreFace.aws_collection_id'),
@@ -138,7 +139,7 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
         $response = $this->getHttpClient()->disassociateFaces([]);
     }
 
-    public function removeAll(Subject $subject)
+    public function removeAllImages(Subject $subject)
     {
     }
 
@@ -174,7 +175,7 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
         $response = $this->getHttpClient()->searchUsersByImage([]);
     }
 
-    public function verifyBase64ImageAgainstSubjectRemoteExample(Subject $subject, string $base64Source, string $remoteTargetUUID)
+    public function verifyBase64ImageAgainstSubjectRemoteExample(Subject $subject, Base64File $base64Source, string $remoteTargetUUID)
     {
     }
 }

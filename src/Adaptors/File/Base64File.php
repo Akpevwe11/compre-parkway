@@ -19,6 +19,11 @@ class Base64File implements File
         return base64_decode($this->base64);
     }
 
+    public function __toString()
+    {
+        return $this->base64;
+    }
+
     public function getFilename()
     {
         return sha1($this->base64);

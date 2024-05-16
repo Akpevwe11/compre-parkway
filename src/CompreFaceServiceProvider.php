@@ -28,7 +28,7 @@ class CompreFaceServiceProvider extends ServiceProvider
         $this->app->singleton('compreFace.aws.faceDetection', fn () => new AWSFaceDetectionService);
         $this->app->singleton('compreFace.aws.faceRecognition', fn () => new AWSFaceRecognitionService);
         $this->app->singleton('compreFace.aws.faceVerification', fn () => new AWSFaceVerificationService);
-        $this->app->singleton('parkwayFaceService', fn () => new ParkwayFaceTechService);
+        $this->app->singleton('parkwayFaceService', fn () => new ParkwayFaceTechService());
     }
 
     public function boot()

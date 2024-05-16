@@ -2,6 +2,8 @@
 
 namespace Stanliwise\CompreParkway\Contract\FaceTech;
 
+use Stanliwise\CompreParkway\Adaptors\File\Base64File;
+use Stanliwise\CompreParkway\Adaptors\File\ImageFile;
 use Stanliwise\CompreParkway\Contract\File;
 use Stanliwise\CompreParkway\Contract\Subject;
 
@@ -12,14 +14,14 @@ interface FaceRecognitionService
     public function disenrollSubject(Subject $subject);
 
     public function addImage(Subject $subject, File $file);
+    
+    public function addImageBase64(Subject $subject, Base64File $file);
 
-    public function removeAll(Subject $subject);
+    public function removeAllImages(Subject $subject);
 
-    public function removeFace(string $image_uuid);
+    public function removeImage(string $image_uuid);
 
-    public function addImageBase64(Subject $subject, string $file);
+    public function verifyFileImageAgainstSubjectRemoteExample(Subject $subject, ImageFile $source, string $remoteTargetUUID);
 
-    public function verifyFileImageAgainstSubjectRemoteExample(Subject $subject, File $source, string $remoteTargetUUID);
-
-    public function verifyBase64ImageAgainstSubjectRemoteExample(Subject $subject, string $base64Source, string $remoteTargetUUID);
+    public function verifyBase64ImageAgainstSubjectRemoteExample(Subject $subject, Base64File $base64Source, string $remoteTargetUUID);
 }

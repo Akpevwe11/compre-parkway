@@ -5,6 +5,7 @@ namespace Stanliwise\CompreParkway\Services\AWS;
 use Aws\Rekognition\Exception\RekognitionException;
 use Exception;
 use GuzzleHttp\Psr7\Response;
+use Stanliwise\CompreParkway\Adaptors\File\Base64File;
 use Stanliwise\CompreParkway\Contract\FaceTech\FaceVerificationService as FaceTechFaceVerificationService;
 use Stanliwise\CompreParkway\Contract\File;
 use Stanliwise\CompreParkway\Exceptions\FaceDoesNotMatch;
@@ -52,7 +53,7 @@ class FaceVerificationService extends BaseService implements FaceTechFaceVerific
         return $this->handleHttpResponse($response);
     }
 
-    public function compareTwoBas64Images(string $source_image, string $target_image)
+    public function compareTwoBas64Images(Base64File $source_image, Base64File $target_image)
     {
     }
 }

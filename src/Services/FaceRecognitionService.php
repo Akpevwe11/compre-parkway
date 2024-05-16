@@ -2,10 +2,13 @@
 
 namespace Stanliwise\CompreParkway\Services;
 
-use Illuminate\Http\File;
+use Stanliwise\CompreParkway\Adaptors\File\Base64File;
+use Stanliwise\CompreParkway\Adaptors\File\ImageFile;
+use Stanliwise\CompreParkway\Contract\FaceTech\FaceRecognitionService as FaceTechFaceRecognitionService;
+use Stanliwise\CompreParkway\Contract\File;
 use Stanliwise\CompreParkway\Contract\Subject;
 
-class FaceRecognitionService extends BaseService
+class FaceRecognitionService extends BaseService implements FaceTechFaceRecognitionService
 {
     public function getHttpClient()
     {
@@ -29,7 +32,7 @@ class FaceRecognitionService extends BaseService
     }
 
     public function addImage(Subject $subject, File $file)
-    {
+    {   
         $response = $this->getHttpClient()->asMultipart()->attach('file', $file->getContent(),  $file->getFilename())->post('/api/v1/recognition/faces?' . http_build_query([
             'subject' => $subject->getUniqueID(),
             'det_prob_threshold' =>  config('compreFace.trust_threshold'),
@@ -38,7 +41,7 @@ class FaceRecognitionService extends BaseService
         return $this->handleFaceHttpResponse($response);
     }
 
-    public function removeAll(Subject $subject)
+    public function removeAllImages(Subject $subject)
     {
         $response = $this->getHttpClient()->delete('/api/v1/recognition/faces?' . http_build_query([
             'subject' => $subject->getUniqueID(),
@@ -47,7 +50,7 @@ class FaceRecognitionService extends BaseService
         return $this->handleFaceHttpResponse($response);
     }
 
-    public function removeFace(string $image_uuid)
+    public function removeImage(string $image_uuid)
     {
         $response = $this->getHttpClient()->delete('/api/v1/recognition/faces?' . http_build_query([
             'image_id' => $image_uuid,
@@ -56,19 +59,19 @@ class FaceRecognitionService extends BaseService
         return $this->handleFaceHttpResponse($response);
     }
 
-    public function addImageBase64(Subject $subject, string $file)
+    public function addImageBase64(Subject $subject, Base64File $file)
     {
         $response = $this->getHttpClient()->asJson()->post('api/v1/recognition/faces?' . http_build_query([
             'subject' => $subject->getUniqueID(),
             'det_prob_threshold' =>  config('compreFace.trust_threshold'),
         ]), [
-            'file' => $file
+            'file' => (string) $file
         ]);
 
         return $this->handleFaceHttpResponse($response);
     }
 
-    public function verifyFileImageAgainstSubjectRemoteExample(Subject $subject, File $source, string $remoteTargetUUID)
+    public function verifyFileImageAgainstSubjectRemoteExample(Subject $subject, ImageFile $source, string $remoteTargetUUID)
     {
         $response = $this->getHttpClient()->asMultipart()->attach('file', $source->getContent(),  $source->getFilename())->post("/api/v1/recognition/faces/{$remoteTargetUUID}/verify?" . http_build_query([
             'subject' => $subject->getUniqueID(),
@@ -79,7 +82,7 @@ class FaceRecognitionService extends BaseService
         return $this->handleFaceHttpResponse($response);
     }
 
-    public function verifyBase64ImageAgainstSubjectRemoteExample(Subject $subject, string $base64Source, string $remoteTargetUUID)
+    public function verifyBase64ImageAgainstSubjectRemoteExample(Subject $subject, Base64File $base64Source, string $remoteTargetUUID)
     {
         $response = $this->getHttpClient()->asJson()->post("/api/v1/recognition/faces/{$remoteTargetUUID}/verify?" . http_build_query([
             'subject' => $subject->getUniqueID(),

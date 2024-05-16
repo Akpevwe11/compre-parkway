@@ -2,6 +2,7 @@
 
 namespace Stanliwise\CompreParkway\Services;
 
+use Stanliwise\CompreParkway\Adaptors\File\Base64File;
 use Stanliwise\CompreParkway\Contract\FaceTech\FaceVerificationService as FaceTechFaceVerificationService;
 use Stanliwise\CompreParkway\Contract\File;
 
@@ -25,14 +26,14 @@ class FaceVerificationService extends BaseService implements FaceTechFaceVerific
         return $this->handleFaceHttpResponse($response);
     }
 
-    public function compareTwoBas64Images(string $source_image, string $target_image)
+    public function compareTwoBas64Images(Base64File $source_image, Base64File $target_image)
     {
         $response = $this->getHttpClient()->asJson()->post('api/v1/recognition/faces?' . http_build_query([
             'det_prob_threshold' => config('compreFace.trust_threshold'),
             'face_plugins' => $this->getPlugings()
         ]), [
-            'source_image' => $source_image,
-            'target_image' => $target_image
+            'source_image' => (string) $source_image,
+            'target_image' => (string) $target_image
         ]);
 
         return $this->handleFaceHttpResponse($response);

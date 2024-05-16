@@ -12,24 +12,26 @@ use Stanliwise\CompreParkway\Models\Example;
 
 class ParkwayFaceTechService
 {
-    public static $driver;
-
     /** @var \Stanliwise\CompreParkway\Contract\FaceTech\Adaptor */
-    protected $default_driver;
+    protected $driver;
 
-    public function __construct()
+    public function __construct(?Adaptor $driver = null)
     {
-        $this->default_driver = app(config('compreFace.driver'));
+        $this->driver = $driver ? $driver : app(config('compreFace.driver'));
+
+
+        if (($this->driver instanceof Adaptor) == false)
+            throw new Exception('Invalid Driver provided');
     }
 
     public function getDriver()
     {
-        return $this->default_driver;
+        return $this->driver;
     }
 
     public function setDriver(\Stanliwise\CompreParkway\Contract\FaceTech\Adaptor $adaptor)
     {
-        $this->default_driver = $adaptor;
+        $this->driver = $adaptor;
     }
 
     public function hasVerifiedFaceImage(Subject $subject)
@@ -47,7 +49,7 @@ class ParkwayFaceTechService
         if ($this->hasEnrolled($subject))
             throw new SubjectAlreadyEnrolled;
 
-        static::facialRecognitionService()->enrollSubject($subject);
+        $this->getfacialRecognitionService()->enrollSubject($subject);
         $this->addPrimaryExample($subject, $image_file, false, $disk_drive);
     }
 
@@ -61,7 +63,7 @@ class ParkwayFaceTechService
 
     protected function addExample(Subject $subject, File $image_file, string $type = 'secondary', ?string $disk = 'local')
     {
-        return tap(self::facialRecognitionService()->addImage($subject, $image_file), function ($response) use ($subject, $image_file, $disk, $type) {
+        return tap($this->getfacialRecognitionService()->addImage($subject, $image_file), function ($response) use ($subject, $image_file, $disk, $type) {
             $relative_path = $image_file->getFilename();
 
             $subject->examples()->create([
@@ -80,7 +82,7 @@ class ParkwayFaceTechService
     protected function addPrimaryExample(Subject $subject, File $image_file, bool $reset = false, $disk)
     {
         if ($reset)
-            $this->removeAllExample($subject);
+            $this->removeAllExamples($subject);
 
 
         if ($subject->primaryExample)
@@ -96,7 +98,7 @@ class ParkwayFaceTechService
 
     public function disenroll(Subject $subject)
     {
-        return tap(self::facialRecognitionService()->disenrollSubject($subject), function () use ($subject) {
+        return tap($this->getfacialRecognitionService()->disenrollSubject($subject), function () use ($subject) {
             $subject->examples()->delete();
         });
     }
@@ -106,61 +108,40 @@ class ParkwayFaceTechService
         if ($example->is_primary)
             throw new Exception('Cannot remove Primary Model, Disenroll or remove all exmaples of Example');
 
-        tap(self::facialRecognitionService()->removeFace($example->image_uuid), function () use ($example) {
+        tap($this->getfacialRecognitionService()->removeImage($example->image_uuid), function () use ($example) {
             $example->delete();
         });
     }
 
-    public function removeAllExample(Subject $subject)
+    public function removeAllExamples(Subject $subject)
     {
-        self::facialRecognitionService()->removeAll($subject);
+        $this->getfacialRecognitionService()->removeAllImages($subject);
         $subject->examples()->delete();
         $subject->refresh();
     }
 
     public function detectFileImage(File $image)
     {
-        return self::facialDetectionService()->detectFileImage($image);
+        return $this->getFacialDetectionService()->detectFileImage($image);
     }
 
     public function compareTwoFileImages(File $sourceImage, File $targeImage)
     {
-        return self::facialVerificationService()->compareTwoFileImages($sourceImage, $targeImage);
+        return $this->getfacialVerificationService()->compareTwoFileImages($sourceImage, $targeImage);
     }
 
-    /**
-     * @return self
-     */
-    public static function instance()
+    public function getFacialRecognitionService()
     {
-        return app('parkwayFaceService');
+        return $this->getDriver()->facialRecognitionService();
     }
 
-    public static function facialRecognitionService()
+    public function getFacialDetectionService()
     {
-        return self::driver()->facialRecognitionService();
+        return $this->getDriver()->facialDetectionService();
     }
 
-    public static function facialDetectionService()
+    public function getFacialVerificationService()
     {
-        return self::driver()->facialDetectionService();
-    }
-
-    public static function facialVerificationService()
-    {
-        return self::driver()->facialVerificationService();
-    }
-
-
-    public static function driver(string $driver = null): Adaptor
-    {
-        if ($driver == null)
-            $driver = config('compreFace.driver');
-
-
-        if (($driver = app($driver)) instanceof Adaptor == false)
-            throw new Exception('Invalid Driver provider');
-
-        return $driver;
+        return $this->getDriver()->facialVerificationService();
     }
 }
