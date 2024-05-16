@@ -2,9 +2,8 @@
 
 namespace Stanliwise\CompreParkway\Services\AWS;
 
-use GuzzleHttp\Utils;
-use Illuminate\Http\File;
 use Stanliwise\CompreParkway\Contract\FaceTech\FaceDetectionService as FaceTechFaceDetectionService;
+use Stanliwise\CompreParkway\Contract\File;
 use Stanliwise\CompreParkway\Exceptions\NoFaceWasDetected;
 
 class FaceDetectionService extends BaseService implements FaceTechFaceDetectionService
@@ -27,16 +26,17 @@ class FaceDetectionService extends BaseService implements FaceTechFaceDetectionS
 
     public function detectFileImage(File $file)
     {
-        $response = $this->getHttpClient()->detectFaces([
-            "Image" => [
-                'Bytes' => $file->getContent(),
-            ]
-        ]);
-
-        return $this->handleHttpResponse($response);
+        $this->detectBase64Image(base64_encode($file->getContent()));
     }
 
     public function detectBase64Image(string $file)
     {
+        $response = $this->getHttpClient()->detectFaces([
+            "Image" => [
+                'Bytes' => base64_decode($file),
+            ]
+        ]);
+
+        return $this->handleHttpResponse($response);
     }
 }

@@ -6,9 +6,9 @@ use Aws\CommandInterface;
 use Aws\Result;
 use GuzzleHttp\Promise\Create;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\File;
 use Psr\Http\Message\RequestInterface;
 use Stanliwise\CompreParkway\Adaptors\AwsFacialAdaptor;
+use Stanliwise\CompreParkway\Adaptors\File\ImageFile;
 use Stanliwise\CompreParkway\Exceptions\FaceDoesNotMatch;
 use Stanliwise\CompreParkway\Exceptions\NoFaceWasDetected;
 use Stanliwise\CompreParkway\Services\ParkwayFaceTechService;
@@ -36,7 +36,7 @@ class FacialRecognitionTest extends TestCase
 
         $response = ParkwayFaceTechService::driver(AwsFacialAdaptor::class)
             ->facialRecognitionService()
-            ->addImage($user, new File(base_path('Images/1.png')));
+            ->addImage($user, new ImageFile(base_path('Images/1.png')));
 
         $this->assertIsArray($response);
     }
@@ -58,7 +58,7 @@ class FacialRecognitionTest extends TestCase
             return Create::promiseFor($result);
         });
 
-        $service->addImage($user, new File(base_path('Images/2.png')));
+        $service->addImage($user, new ImageFile(base_path('Images/2.png')));
     }
 
     public function test_a_different_face_cannot_be_added_to_a_user_image()
@@ -84,7 +84,7 @@ class FacialRecognitionTest extends TestCase
             return Create::promiseFor($result);
         });
 
-        $service->addImage($user, new File(base_path('Images/3.jpeg')));
+        $service->addImage($user, new ImageFile(base_path('Images/3.jpeg')));
     }
 
     public function test_user_same_image_can_be_associated_to_existing_user()
@@ -106,7 +106,7 @@ class FacialRecognitionTest extends TestCase
             return Create::promiseFor($result);
         });
 
-        $response = $service->addImage($user, new File(base_path('Images/8.jpg')));
+        $response = $service->addImage($user, new ImageFile(base_path('Images/8.jpg')));
 
         $this->assertArrayHasKey('image_uuid', $response);
     }

@@ -3,8 +3,8 @@
 namespace Stanliwise\CompreParkway\Services;
 
 use Illuminate\Http\Client\RequestException;
-use Illuminate\Http\File;
 use Stanliwise\CompreParkway\Contract\FaceTech\FaceDetectionService as FaceTechFaceDetectionService;
+use Stanliwise\CompreParkway\Contract\File;
 use Stanliwise\CompreParkway\Exceptions\NoFaceWasDetected;
 
 class FaceDetectionService extends BaseService implements FaceTechFaceDetectionService

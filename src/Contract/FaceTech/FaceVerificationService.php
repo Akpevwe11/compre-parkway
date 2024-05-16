@@ -2,7 +2,7 @@
 
 namespace Stanliwise\CompreParkway\Contract\FaceTech;
 
-use Illuminate\Http\File;
+use Stanliwise\CompreParkway\Contract\File;
 
 interface FaceVerificationService
 {

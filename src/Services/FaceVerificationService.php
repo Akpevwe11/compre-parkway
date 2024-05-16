@@ -2,8 +2,8 @@
 
 namespace Stanliwise\CompreParkway\Services;
 
-use Illuminate\Http\File;
 use Stanliwise\CompreParkway\Contract\FaceTech\FaceVerificationService as FaceTechFaceVerificationService;
+use Stanliwise\CompreParkway\Contract\File;
 
 class FaceVerificationService extends BaseService implements FaceTechFaceVerificationService
 {

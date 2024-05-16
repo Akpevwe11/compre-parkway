@@ -2,11 +2,9 @@
 
 namespace Stanliwise\CompreParkway\Services;
 
-use CompreFace;
 use Exception;
-use Illuminate\Http\File;
-use Illuminate\Support\Facades\Storage;
 use Stanliwise\CompreParkway\Contract\FaceTech\Adaptor;
+use Stanliwise\CompreParkway\Contract\File;
 use Stanliwise\CompreParkway\Contract\Subject;
 use Stanliwise\CompreParkway\Exceptions\SubjectAlreadyEnrolled;
 use Stanliwise\CompreParkway\Exceptions\SubjectNameAlreadyExist;
@@ -16,12 +14,30 @@ class ParkwayFaceTechService
 {
     public static $driver;
 
+    /** @var \Stanliwise\CompreParkway\Contract\FaceTech\Adaptor */
+    protected $default_driver;
+
+    public function __construct()
+    {
+        $this->default_driver = app(config('compreFace.driver'));
+    }
+
+    public function getDriver()
+    {
+        return $this->default_driver;
+    }
+
+    public function setDriver(\Stanliwise\CompreParkway\Contract\FaceTech\Adaptor $adaptor)
+    {
+        $this->default_driver = $adaptor;
+    }
+
     public function hasVerifiedFaceImage(Subject $subject)
     {
         return $subject->verifiedExamples()->count() > 0;
     }
 
-    public function hasEnrolled(Subject $subject)
+    public function hasEnrolled(Subject $subject): bool
     {
         return (bool) $subject->primaryExample;
     }
@@ -102,6 +118,16 @@ class ParkwayFaceTechService
         $subject->refresh();
     }
 
+    public function detectFileImage(File $image)
+    {
+        return $this->facialDetectionService()->detectFileImage($image);
+    }
+
+    public function compareTwoFileImages(File $sourceImage, File $targeImage)
+    {
+        return $this->facialVerificationService()->compareTwoFileImages($sourceImage, $targeImage);
+    }
+
     /**
      * @return self
      */
@@ -118,6 +144,11 @@ class ParkwayFaceTechService
     public static function facialDetectionService()
     {
         return self::driver()->facialDetectionService();
+    }
+
+    public static function facialVerificationService()
+    {
+        return self::driver()->facialVerificationService();
     }
 
 

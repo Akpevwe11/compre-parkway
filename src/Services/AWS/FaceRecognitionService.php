@@ -2,9 +2,8 @@
 
 namespace Stanliwise\CompreParkway\Services\AWS;
 
-use Exception;
-use Illuminate\Http\File;
 use Stanliwise\CompreParkway\Contract\FaceTech\FaceRecognitionService as FaceTechFaceRecognitionService;
+use Stanliwise\CompreParkway\Contract\File;
 use Stanliwise\CompreParkway\Contract\Subject;
 use Stanliwise\CompreParkway\Exceptions\FaceDoesNotMatch;
 use Stanliwise\CompreParkway\Exceptions\MultipleFaceDetected;

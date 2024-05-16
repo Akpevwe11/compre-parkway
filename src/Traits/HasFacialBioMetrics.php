@@ -2,7 +2,7 @@
 
 namespace Stanliwise\CompreParkway\Traits;
 
-use Illuminate\Http\File;
+use Stanliwise\CompreParkway\Adaptors\File\ImageFile;
 use Stanliwise\CompreParkway\Models\Example;
 use Stanliwise\CompreParkway\Services\ParkwayFaceTechService;
 
@@ -34,6 +34,6 @@ trait HasFacialBiometrics
 
     public function enroll(string $image_path)
     {
-        return ParkwayFaceTechService::instance()->enroll($this, new File($image_path));
+        return ParkwayFaceTechService::instance()->enroll($this, new ImageFile($image_path));
     }
 }

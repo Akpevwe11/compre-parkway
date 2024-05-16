@@ -6,9 +6,8 @@ use Aws\CommandInterface;
 use Aws\Result;
 use GuzzleHttp\Promise\Create;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\File;
 use Psr\Http\Message\RequestInterface;
-use Stanliwise\CompreParkway\Models\Example;
+use Stanliwise\CompreParkway\Adaptors\File\ImageFile;
 use Stanliwise\CompreParkway\Services\ParkwayFaceTechService;
 use Tests\App\Models\User;
 use Tests\TestCase;
@@ -32,7 +31,7 @@ class ParkwayFaceTechServiceTest extends TestCase
 
             if (isset($mock_to_use['FaceRecords'][0]['Face']['FaceId']))
                 $mock_to_use['FaceRecords'][0]['Face']['FaceId'] = (string) \Illuminate\Support\Str::uuid();
-            
+
             $result = new Result($mock_to_use);
             return Create::promiseFor($result);
         });
@@ -43,12 +42,12 @@ class ParkwayFaceTechServiceTest extends TestCase
         /** @var \Stanliwise\CompreParkway\Services\ParkwayFaceTechService */
         $service = ParkwayFaceTechService::instance();
 
-        $service->enroll($user, new File(base_path('images/1.png')));
+        $service->enroll($user, new ImageFile(base_path('images/1.png')));
         $this->assertDatabaseCount('examples', 1);
         $user->refresh();
 
         //
-        $service->addSecondaryExample($user, new File(base_path('images/1.png')));
+        $service->addSecondaryExample($user, new ImageFile(base_path('images/1.png')));
 
         $this->assertDatabaseCount('examples', 2);
     }

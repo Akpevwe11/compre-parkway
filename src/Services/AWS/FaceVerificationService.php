@@ -3,8 +3,8 @@
 namespace Stanliwise\CompreParkway\Services\AWS;
 
 use Exception;
-use Illuminate\Http\File;
 use Stanliwise\CompreParkway\Contract\FaceTech\FaceVerificationService as FaceTechFaceVerificationService;
+use Stanliwise\CompreParkway\Contract\File;
 use Stanliwise\CompreParkway\Exceptions\FaceDoesNotMatch;
 use Stanliwise\CompreParkway\Exceptions\NoFaceWasDetected;
 
