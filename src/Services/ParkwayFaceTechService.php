@@ -120,12 +120,12 @@ class ParkwayFaceTechService
 
     public function detectFileImage(File $image)
     {
-        return $this->facialDetectionService()->detectFileImage($image);
+        return self::facialDetectionService()->detectFileImage($image);
     }
 
     public function compareTwoFileImages(File $sourceImage, File $targeImage)
     {
-        return $this->facialVerificationService()->compareTwoFileImages($sourceImage, $targeImage);
+        return self::facialVerificationService()->compareTwoFileImages($sourceImage, $targeImage);
     }
 
     /**
