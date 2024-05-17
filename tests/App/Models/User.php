@@ -10,7 +10,7 @@ use Tests\Database\Factories\UserFactory;
 
 class User extends Model implements Subject
 {
-    use HasFactory, HasFacialBiometrics;
+    use HasFacialBiometrics, HasFactory;
 
     public static function newFactory()
     {

@@ -1,17 +1,14 @@
 <?php
 
-namespace  Tests\Unit;
+namespace Tests\Unit;
 
-use Stanliwise\CompreParkway\Adaptors\AwsFacialAdaptor;
 use Stanliwise\CompreParkway\Adaptors\File\ImageFile;
 use Stanliwise\CompreParkway\Exceptions\NoFaceWasDetected;
 use Stanliwise\CompreParkway\Facade\FaceTech;
-use Stanliwise\CompreParkway\Services\ParkwayFaceTechService;
 use Tests\TestCase;
 
 class FacialDetectionTest extends TestCase
 {
-
     public function test_a_user_cannot_use_an_image_with_no_face()
     {
         $this->expectException(NoFaceWasDetected::class);

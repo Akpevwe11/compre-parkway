@@ -19,7 +19,8 @@
     "minimum-stability": "dev",
     "require-dev": {
         "phpunit/phpunit": "9.6.x-dev",
-        "mockery/mockery": "1.7.x-dev"
+        "mockery/mockery": "1.7.x-dev",
+        "laravel/pint": "dev-main"
     },
     "require": {
         "aws/aws-sdk-php": "3.306.0",

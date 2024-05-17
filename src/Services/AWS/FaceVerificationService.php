@@ -2,10 +2,7 @@
 
 namespace Stanliwise\CompreParkway\Services\AWS;
 
-use Aws\Rekognition\Exception\RekognitionException;
 use Exception;
-use GuzzleHttp\Psr7\Response;
-use Stanliwise\CompreParkway\Adaptors\File\Base64File;
 use Stanliwise\CompreParkway\Contract\FaceTech\FaceVerificationService as FaceTechFaceVerificationService;
 use Stanliwise\CompreParkway\Contract\File;
 use Stanliwise\CompreParkway\Exceptions\FaceDoesNotMatch;
@@ -22,17 +19,21 @@ class FaceVerificationService extends BaseService implements FaceTechFaceVerific
         $faceMatches = data_get($toArray, 'FaceMatches');
         $similarity = data_get($faceMatches, '0.Similarity');
 
-        if (!$sourceImage)
+        if (! $sourceImage) {
             throw new NoFaceWasDetected;
+        }
 
-        if ($confidence < (config('compreFace.trust_threshold') * 100))
+        if ($confidence < (config('compreFace.trust_threshold') * 100)) {
             throw new NoFaceWasDetected('No Face was detected in source Image');
+        }
 
-        if (!$faceMatches || ($similarity < (config('compreFace.trust_threshold') * 100)))
+        if (! $faceMatches || ($similarity < (config('compreFace.trust_threshold') * 100))) {
             throw new FaceDoesNotMatch;
+        }
 
-        if (count($faceMatches) > 1)
+        if (count($faceMatches) > 1) {
             throw new Exception('Multiple Faces Detected');
+        }
 
         return $toArray;
     }
@@ -48,7 +49,7 @@ class FaceVerificationService extends BaseService implements FaceTechFaceVerific
             ],
             'TargetImage' => [
                 'Bytes' => $target_image->getContent(),
-            ]
+            ],
         ]);
 
         return $this->handleHttpResponse($response);

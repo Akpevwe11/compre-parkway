@@ -19,9 +19,9 @@ class ParkwayFaceTechService
     {
         $this->driver = $driver ? $driver : app(config('compreFace.driver'));
 
-
-        if (($this->driver instanceof Adaptor) == false)
+        if (($this->driver instanceof Adaptor) == false) {
             throw new Exception('Invalid Driver provided');
+        }
     }
 
     public function getDriver()
@@ -46,8 +46,9 @@ class ParkwayFaceTechService
 
     public function enroll(Subject $subject, File $image_file, ?string $disk_drive = 'local')
     {
-        if ($this->hasEnrolled($subject))
+        if ($this->hasEnrolled($subject)) {
             throw new SubjectAlreadyEnrolled;
+        }
 
         $this->getfacialRecognitionService()->enrollSubject($subject);
         $this->addPrimaryExample($subject, $image_file, false, $disk_drive);
@@ -55,8 +56,9 @@ class ParkwayFaceTechService
 
     public function addSecondaryExample(Subject $subject, File $image_file, string $disk = 'local')
     {
-        if ($this->hasEnrolled($subject) == false)
+        if ($this->hasEnrolled($subject) == false) {
             throw new Exception('Subject not enrolled properly');
+        }
 
         $this->addExample($subject, $image_file, 'seconeary', $disk);
     }
@@ -79,14 +81,15 @@ class ParkwayFaceTechService
         });
     }
 
-    protected function addPrimaryExample(Subject $subject, File $image_file, bool $reset = false, $disk)
+    protected function addPrimaryExample(Subject $subject, File $image_file, bool $reset, $disk)
     {
-        if ($reset)
+        if ($reset) {
             $this->removeAllExamples($subject);
+        }
 
-
-        if ($subject->primaryExample)
+        if ($subject->primaryExample) {
             throw new SubjectNameAlreadyExist;
+        }
 
         //TODO: check there is no image remotely
 
@@ -105,8 +108,9 @@ class ParkwayFaceTechService
 
     public function removeExample(Example $example)
     {
-        if ($example->is_primary)
+        if ($example->is_primary) {
             throw new Exception('Cannot remove Primary Model, Disenroll or remove all exmaples of Example');
+        }
 
         tap($this->getfacialRecognitionService()->removeFaceImage($example->image_uuid), function () use ($example) {
             $example->delete();

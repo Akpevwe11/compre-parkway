@@ -8,7 +8,6 @@ use Stanliwise\CompreParkway\Services\ParkwayFaceTechService;
 
 trait HasFacialBiometrics
 {
-
     /**
      * @return mixed
      */

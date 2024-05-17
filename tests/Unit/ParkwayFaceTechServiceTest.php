@@ -1,6 +1,6 @@
 <?php
 
-namespace  Tests\Unit;
+namespace Tests\Unit;
 
 use Aws\CommandInterface;
 use Aws\Result;
@@ -10,7 +10,6 @@ use Psr\Http\Message\RequestInterface;
 use Stanliwise\CompreParkway\Adaptors\File\ImageFile;
 use Stanliwise\CompreParkway\Exceptions\NoFaceWasDetected;
 use Stanliwise\CompreParkway\Facade\FaceTech;
-use Stanliwise\CompreParkway\Services\ParkwayFaceTechService;
 use Tests\App\Models\User;
 use Tests\TestCase;
 
@@ -31,10 +30,12 @@ class ParkwayFaceTechServiceTest extends TestCase
             $mock_to_use = str_contains($request->getBody()->__toString(), '"Image":{"Bytes"') ? $mock_payload : $mock_payload2;
             $mock_to_use = json_decode($mock_to_use, true);
 
-            if (isset($mock_to_use['FaceRecords'][0]['Face']['FaceId']))
+            if (isset($mock_to_use['FaceRecords'][0]['Face']['FaceId'])) {
                 $mock_to_use['FaceRecords'][0]['Face']['FaceId'] = (string) \Illuminate\Support\Str::uuid();
+            }
 
             $result = new Result($mock_to_use);
+
             return Create::promiseFor($result);
         });
 
@@ -50,10 +51,11 @@ class ParkwayFaceTechServiceTest extends TestCase
 
         $this->assertDatabaseCount('examples', 2);
     }
+
     public function test_same_user_face_can_be_compared()
     {
         $this->expectException(NoFaceWasDetected::class);
-        $response = FaceTech::compareTwoFileImages(new ImageFile(base_path("Images/2.png")), new ImageFile(base_path("Images/8.jpg")));
+        $response = FaceTech::compareTwoFileImages(new ImageFile(base_path('Images/2.png')), new ImageFile(base_path('Images/8.jpg')));
         $this->assertIsArray($response);
     }
 }

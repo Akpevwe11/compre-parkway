@@ -13,7 +13,7 @@ class CompreFaceFacialAdaptor implements Adaptor
     {
         return 'compreFace';
     }
-    
+
     public function facialRecognitionService(): FaceRecognitionService
     {
         return app('compreFace.faceRecognition');

@@ -2,8 +2,8 @@
 
 namespace Tests\Database\Factories;
 
-use Tests\App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Tests\App\Models\User;
 
 /**
  * @extends Factory<User>

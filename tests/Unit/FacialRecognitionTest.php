@@ -1,20 +1,17 @@
 <?php
 
-namespace  Tests\Unit;
+namespace Tests\Unit;
 
 use Aws\CommandInterface;
 use Aws\Result;
 use GuzzleHttp\Promise\Create;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Psr\Http\Message\RequestInterface;
-use Stanliwise\CompreParkway\Adaptors\AwsFacialAdaptor;
 use Stanliwise\CompreParkway\Adaptors\File\ImageFile;
 use Stanliwise\CompreParkway\Exceptions\FaceDoesNotMatch;
 use Stanliwise\CompreParkway\Exceptions\NoFaceWasDetected;
 use Stanliwise\CompreParkway\Facade\FaceTech;
-use Stanliwise\CompreParkway\Services\ParkwayFaceTechService;
 use Tests\App\Models\User;
-use Tests\Database\Factories\UserFactory;
 use Tests\TestCase;
 
 class FacialRecognitionTest extends TestCase
@@ -56,6 +53,7 @@ class FacialRecognitionTest extends TestCase
 
         $service->getHttpClient()->getHandlerList()->setHandler(function (CommandInterface $cmd, RequestInterface $request) use ($mock_payload) {
             $result = new Result(json_decode($mock_payload, true));
+
             return Create::promiseFor($result);
         });
 
@@ -71,8 +69,6 @@ class FacialRecognitionTest extends TestCase
 
         $mock_payload2 = '{"AssociatedFaces":[],"UnsuccessfulFaceAssociations":[{"FaceId":"4dc3a127-84f6-4364-849c-8862dee7e38a","Confidence":0.07481203973293304,"Reasons":["LOW_MATCH_CONFIDENCE"]}],"UserStatus":"ACTIVE","@metadata":{"statusCode":200,"effectiveUri":"https:\/\/rekognition.us-east-1.amazonaws.com","headers":{"x-amzn-requestid":"199c77f3-d7ff-437b-8e08-7c20d6300e08","content-type":"application\/x-amz-json-1.1","content-length":"195","date":"Wed, 15 May 2024 01:55:54 GMT"},"transferStats":[]}}';
 
-
-
         /** @var \Tests\App\Models\User */
         $user = User::factory()->create();
 
@@ -82,6 +78,7 @@ class FacialRecognitionTest extends TestCase
         $service->getHttpClient()->getHandlerList()->setHandler(function (CommandInterface $cmd, RequestInterface $request) use ($mock_payload, $mock_payload2) {
             $mock_to_use = str_contains($request->getBody()->__toString(), 'ExternalImageId') ? $mock_payload : $mock_payload2;
             $result = new Result(json_decode($mock_to_use, true));
+
             return Create::promiseFor($result);
         });
 
@@ -94,7 +91,6 @@ class FacialRecognitionTest extends TestCase
 
         $mock_payload2 = '{"AssociatedFaces":[{"FaceId":"1f076875-0b0f-42ea-991e-bb2d8491864e"}],"UnsuccessfulFaceAssociations":[],"UserStatus":"UPDATING","@metadata":{"statusCode":200,"effectiveUri":"https:\/\/rekognition.us-east-1.amazonaws.com","headers":{"x-amzn-requestid":"a75100b4-6ea2-452a-b37d-2bb43927d9b3","content-type":"application\/x-amz-json-1.1","content-length":"129","date":"Wed, 15 May 2024 02:16:37 GMT"},"transferStats":[]}}';
 
-
         /** @var \Tests\App\Models\User */
         $user = User::factory()->create();
 
@@ -104,6 +100,7 @@ class FacialRecognitionTest extends TestCase
         $service->getHttpClient()->getHandlerList()->setHandler(function (CommandInterface $cmd, RequestInterface $request) use ($mock_payload, $mock_payload2) {
             $mock_to_use = str_contains($request->getBody()->__toString(), 'ExternalImageId') ? $mock_payload : $mock_payload2;
             $result = new Result(json_decode($mock_to_use, true));
+
             return Create::promiseFor($result);
         });
 
@@ -121,14 +118,15 @@ class FacialRecognitionTest extends TestCase
 
         $service->getHttpClient()->getHandlerList()->setHandler(function (CommandInterface $cmd, RequestInterface $request) use ($mock_payload) {
             $result = new Result(json_decode($mock_payload, true));
+
             return Create::promiseFor($result);
         });
 
         $user = User::factory()->create();
 
-       $response = FaceTech::verifyFaceImageAgainstASubject($user, new ImageFile(base_path('Images/8.jpg')));
+        $response = FaceTech::verifyFaceImageAgainstASubject($user, new ImageFile(base_path('Images/8.jpg')));
 
-       $this->assertIsArray($response);
+        $this->assertIsArray($response);
     }
 
     public function test_view_all_users()
@@ -140,11 +138,9 @@ class FacialRecognitionTest extends TestCase
         $service->listUsers();
     }
 
-
     public function test_view_all_faces()
     {
         $mock_payload = '{"Faces":[{"FaceId":"9179010f-4a89-4079-8a2b-32b9036cc5f9","BoundingBox":{"Width":0.2350350022315979,"Height":0.3896709978580475,"Left":0.5666329860687256,"Top":0.17438499629497528},"ImageId":"6c14659d-bd20-3418-8f11-73209fb863c5","ExternalImageId":"3.jpeg1","Confidence":99.99739837646484,"IndexFacesModelVersion":"7.0"},{"FaceId":"9b56cb4d-c482-4351-98b2-e9354ed2fe8e","BoundingBox":{"Width":0.5919989943504333,"Height":0.571619987487793,"Left":0.20948100090026855,"Top":0.2924500107765198},"ImageId":"e1ddf04b-c704-3428-9bfb-684fb7801714","ExternalImageId":"1.png1","Confidence":99.99960327148438,"IndexFacesModelVersion":"7.0","UserId":"1"}],"FaceModelVersion":"7.0","@metadata":{"statusCode":200,"effectiveUri":"https:\/\/rekognition.us-east-1.amazonaws.com","headers":{"x-amzn-requestid":"a5ebc28c-488d-4888-b9a0-92a7a1d32d9a","content-type":"application\/x-amz-json-1.1","content-length":"671","date":"Wed, 15 May 2024 01:01:07 GMT"},"transferStats":[]}}';
-
 
         /** @var \Tests\App\Models\User */
         $user = User::factory()->create();

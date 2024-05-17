@@ -15,11 +15,13 @@ class FaceDetectionService extends BaseService implements FaceTechFaceDetectionS
         $faceDetails = data_get($toArray, 'FaceDetails');
         $confidence = data_get($toArray, 'FaceDetails.0.Confidence');
 
-        if (!$faceDetails)
+        if (! $faceDetails) {
             throw new NoFaceWasDetected;
+        }
 
-        if ($confidence <  (config('compreFace.trust_threshold') * 100))
+        if ($confidence < (config('compreFace.trust_threshold') * 100)) {
             throw new NoFaceWasDetected;
+        }
 
         return $toArray;
     }
@@ -27,9 +29,9 @@ class FaceDetectionService extends BaseService implements FaceTechFaceDetectionS
     public function detectFace(File $file)
     {
         $response = $this->getHttpClient()->detectFaces([
-            "Image" => [
+            'Image' => [
                 'Bytes' => $file->getContent(),
-            ]
+            ],
         ]);
 
         return $this->handleHttpResponse($response);

@@ -5,7 +5,6 @@ namespace Tests\App\Providers;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
-use Stanliwise\CompreParkway\CompreFaceServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,11 +15,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (!app()->environment('local')) {
+        if (! app()->environment('local')) {
             URL::forceScheme('https');
         }
 
-        $this->loadMigrationsFrom(__DIR__. '/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
         Paginator::useBootstrap();
     }

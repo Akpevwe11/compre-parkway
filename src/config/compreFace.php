@@ -1,4 +1,5 @@
 <?php
+
 return [
     'driver' => env('COMPREFACE_DRIVER', 'compreFace'),
     'driver_name' => 'aws',
@@ -12,6 +13,6 @@ return [
     'aws_collection_id' => env('AWS_COLLECTION_ID'),
     'aws_credentials' => [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
-        'key' => env('AWS_ACCESS_KEY_ID')
-    ]
+        'key' => env('AWS_ACCESS_KEY_ID'),
+    ],
 ];

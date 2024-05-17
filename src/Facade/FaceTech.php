@@ -3,13 +3,12 @@
 namespace Stanliwise\CompreParkway\Facade;
 
 use Illuminate\Support\Facades\Facade;
-use \Stanliwise\CompreParkway\Contract\Subject;
 use Stanliwise\CompreParkway\Adaptors\File;
 use Stanliwise\CompreParkway\Contract\FaceTech\Adaptor;
 use Stanliwise\CompreParkway\Contract\FaceTech\FaceDetectionService;
 use Stanliwise\CompreParkway\Contract\FaceTech\FaceRecognitionService;
 use Stanliwise\CompreParkway\Contract\FaceTech\FaceVerificationService;
-
+use Stanliwise\CompreParkway\Contract\Subject;
 
 /**
  * @method static void setDriver(Adaptor $adaptor)
@@ -25,7 +24,7 @@ use Stanliwise\CompreParkway\Contract\FaceTech\FaceVerificationService;
  * @method static FaceRecognitionService getFacialRecognitionService()
  * @method static FaceDetectionService getFacialDetectionService()
  * @method static FaceVerificationService getFacialVerificationService()
- * 
+ *
  * @see \Stanliwise\CompreParkway\Services\ParkwayFaceTechService
  */
 class FaceTech extends Facade

@@ -13,13 +13,12 @@ use Stanliwise\CompreParkway\Services\ParkwayFaceTechService;
 
 class CompreFaceServiceProvider extends ServiceProvider
 {
-
     protected static $shouldMigrate = true;
 
     public function register()
     {
-        if (!app()->configurationIsCached()) {
-            $this->mergeConfigFrom(__DIR__ . '/config/compreFace.php', 'compreFace');
+        if (! app()->configurationIsCached()) {
+            $this->mergeConfigFrom(__DIR__.'/config/compreFace.php', 'compreFace');
         }
 
         $this->app->singleton('compreFace.faceDetection', fn () => new FaceDetectionService);
@@ -34,10 +33,11 @@ class CompreFaceServiceProvider extends ServiceProvider
     public function boot()
     {
         if (app()->runningInConsole()) {
-            $this->publishes([__DIR__ . '/config/compreFace.php' => config_path('compreFace.php')], 'compreface-config');
+            $this->publishes([__DIR__.'/config/compreFace.php' => config_path('compreFace.php')], 'compreface-config');
 
-            if (self::$shouldMigrate)
-                return $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+            if (self::$shouldMigrate) {
+                return $this->loadMigrationsFrom(__DIR__.'/database/migrations');
+            }
         }
     }
 

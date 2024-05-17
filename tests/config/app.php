@@ -166,7 +166,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         \Stanliwise\CompreParkway\CompreFaceServiceProvider::class,
-        AppServiceProvider::class
+        AppServiceProvider::class,
     ],
 
     /*
