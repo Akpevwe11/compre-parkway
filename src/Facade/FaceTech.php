@@ -21,6 +21,7 @@ use Stanliwise\CompreParkway\Contract\FaceTech\FaceVerificationService;
  * @method static void addSecondaryExample(Subject $subject, File $image_file, string $disk = 'local')
  * @method static array detectFileImage(File $image)
  * @method static array compareTwoFileImages(File $sourceImage, File $targeImage)
+ * @method static array verifyFaceImageAgainstASubject(Subject $subject, File $file)
  * @method static FaceRecognitionService getFacialRecognitionService()
  * @method static FaceDetectionService getFacialDetectionService()
  * @method static FaceVerificationService getFacialVerificationService()

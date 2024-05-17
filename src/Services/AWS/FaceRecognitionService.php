@@ -8,6 +8,7 @@ use Stanliwise\CompreParkway\Contract\Subject;
 use Stanliwise\CompreParkway\Exceptions\FaceDoesNotMatch;
 use Stanliwise\CompreParkway\Exceptions\MultipleFaceDetected;
 use Stanliwise\CompreParkway\Exceptions\NoFaceWasDetected;
+use Stanliwise\CompreParkway\Exceptions\NoPrimaryImageWasFound;
 
 class FaceRecognitionService extends BaseService implements FaceTechFaceRecognitionService
 {
@@ -104,7 +105,7 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
         if (count($associatFaces) < 1)
             throw new FaceDoesNotMatch;
 
-        if(count($associatFaces) > 1)
+        if (count($associatFaces) > 1)
             throw new MultipleFaceDetected;
 
         return $faceDetails + ["image_uuid" => $face_id, 'similarity_threshold' => $similarity_threshold];
@@ -171,12 +172,30 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
     {
         $response = $this->getHttpClient()->searchUsersByImage([
             "CollectionId" => config('compreFace.aws_collection_id'),
-            "Image" => $source->getContent(),
+            "Image" => [
+                "Bytes" =>  $source->getContent()
+            ],
             "QualityFilter" => 'AUTO',
             "MaxUsers" => 1,
-            "UserMatchThreshold" => (config('compreFace.trust_threshold') * 100),
+            "UserMatchThreshold" => $accepted_threshold = (config('compreFace.trust_threshold') * 100),
         ]);
 
-        return $response->toArray();
+
+        $arrayResponse =  $response->toArray();
+        $userMatches = data_get($arrayResponse, 'UserMatches');
+        $similarity_threshold = data_get($userMatches, '0.Similarity');
+        
+        if(!$similarity_threshold || ($similarity_threshold < $accepted_threshold))
+            throw new FaceDoesNotMatch;
+
+        if ($userMatches && count($userMatches) < 1)
+            throw new FaceDoesNotMatch;
+
+        $user_details = data_get($userMatches, '0.User');
+
+        if (($user_details['UserId'] ?? null) != $subject->getUniqueID())
+            throw new FaceDoesNotMatch;
+
+        return $arrayResponse;
     }
 }

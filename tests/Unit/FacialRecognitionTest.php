@@ -14,6 +14,7 @@ use Stanliwise\CompreParkway\Exceptions\NoFaceWasDetected;
 use Stanliwise\CompreParkway\Facade\FaceTech;
 use Stanliwise\CompreParkway\Services\ParkwayFaceTechService;
 use Tests\App\Models\User;
+use Tests\Database\Factories\UserFactory;
 use Tests\TestCase;
 
 class FacialRecognitionTest extends TestCase
@@ -109,6 +110,25 @@ class FacialRecognitionTest extends TestCase
         $response = $service->addFaceImage($user, new ImageFile(base_path('Images/8.jpg')));
 
         $this->assertArrayHasKey('image_uuid', $response);
+    }
+
+    public function test_that_subject_face_image_match_against_a_subject_successfully()
+    {
+        $mock_payload = '{"UserMatches":[{"Similarity":99.99996185302734,"User":{"UserId":"1","UserStatus":"ACTIVE"}}],"FaceModelVersion":"7","SearchedFace":{"FaceDetail":{"BoundingBox":{"Width":0.31575268507003784,"Height":0.31331467628479004,"Left":0.35431528091430664,"Top":0.15663686394691467}}},"UnsearchedFaces":[],"@metadata":{"statusCode":200,"effectiveUri":"https:\/\/rekognition.us-east-1.amazonaws.com","headers":{"x-amzn-requestid":"9b3a583c-cd1b-4d6b-84d9-5c438595393c","content-type":"application\/x-amz-json-1.1","content-length":"296","date":"Fri, 17 May 2024 06:06:58 GMT"},"transferStats":[]}}';
+
+        /** @var \Stanliwise\CompreParkway\Services\AWS\FaceRecognitionService */
+        $service = FaceTech::getFacialRecognitionService();
+
+        $service->getHttpClient()->getHandlerList()->setHandler(function (CommandInterface $cmd, RequestInterface $request) use ($mock_payload) {
+            $result = new Result(json_decode($mock_payload, true));
+            return Create::promiseFor($result);
+        });
+
+        $user = User::factory()->create();
+
+       $response = FaceTech::verifyFaceImageAgainstASubject($user, new ImageFile(base_path('Images/8.jpg')));
+
+       $this->assertIsArray($response);
     }
 
     public function test_view_all_users()

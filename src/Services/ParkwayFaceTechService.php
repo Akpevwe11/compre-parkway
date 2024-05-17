@@ -120,6 +120,11 @@ class ParkwayFaceTechService
         $subject->refresh();
     }
 
+    public function verifyFaceImageAgainstASubject(Subject $subject, File $file)
+    {
+        return $this->getFacialRecognitionService()->verifyFaceImageAgainstASubject($subject, $file);
+    }
+
     public function detectFileImage(File $image)
     {
         return $this->getFacialDetectionService()->detectFace($image);
