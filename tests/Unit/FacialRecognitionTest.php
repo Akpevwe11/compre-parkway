@@ -36,7 +36,7 @@ class FacialRecognitionTest extends TestCase
         $user = User::factory()->create();
 
         $response = FaceTech::getFacialRecognitionService()
-            ->addImage($user, new ImageFile(base_path('Images/1.png')));
+            ->addFaceImage($user, new ImageFile(base_path('Images/1.png')));
 
         $this->assertIsArray($response);
     }
@@ -58,7 +58,7 @@ class FacialRecognitionTest extends TestCase
             return Create::promiseFor($result);
         });
 
-        $service->addImage($user, new ImageFile(base_path('Images/2.png')));
+        $service->addFaceImage($user, new ImageFile(base_path('Images/2.png')));
     }
 
     public function test_a_different_face_cannot_be_added_to_a_user_image()
@@ -84,7 +84,7 @@ class FacialRecognitionTest extends TestCase
             return Create::promiseFor($result);
         });
 
-        $service->addImage($user, new ImageFile(base_path('Images/3.jpeg')));
+        $service->addFaceImage($user, new ImageFile(base_path('Images/3.jpeg')));
     }
 
     public function test_user_same_image_can_be_associated_to_existing_user()
@@ -106,7 +106,7 @@ class FacialRecognitionTest extends TestCase
             return Create::promiseFor($result);
         });
 
-        $response = $service->addImage($user, new ImageFile(base_path('Images/8.jpg')));
+        $response = $service->addFaceImage($user, new ImageFile(base_path('Images/8.jpg')));
 
         $this->assertArrayHasKey('image_uuid', $response);
     }

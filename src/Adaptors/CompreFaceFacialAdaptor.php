@@ -9,6 +9,11 @@ use Stanliwise\CompreParkway\Contract\FaceTech\FaceVerificationService;
 
 class CompreFaceFacialAdaptor implements Adaptor
 {
+    public function getName()
+    {
+        return 'compreFace';
+    }
+    
     public function facialRecognitionService(): FaceRecognitionService
     {
         return app('compreFace.faceRecognition');

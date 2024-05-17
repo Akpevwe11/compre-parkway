@@ -4,6 +4,7 @@ namespace Stanliwise\CompreParkway\Services;
 
 use Illuminate\Http\Client\RequestException;
 use Stanliwise\CompreParkway\Adaptors\File\Base64File;
+use Stanliwise\CompreParkway\Adaptors\File\ImageFile;
 use Stanliwise\CompreParkway\Contract\FaceTech\FaceDetectionService as FaceTechFaceDetectionService;
 use Stanliwise\CompreParkway\Contract\File;
 use Stanliwise\CompreParkway\Exceptions\NoFaceWasDetected;
@@ -39,8 +40,9 @@ class FaceDetectionService extends BaseService implements FaceTechFaceDetectionS
         return static::handleFaceHttpResponse($response);
     }
 
-    public function detectBase64Image(Base64File $file)
+    public function detectFace(File $file)
     {
+        $file = ($file instanceof ImageFile) ? $file->toBase64File() : $file;
         $response = $this->getHttpClient()->asJson()->post('/api/v1/recognition/faces?' . http_build_query([
             'face_plugins' => $this->getPlugings(),
             'det_prob_threshold' => config('compreFace.trust_threshold')

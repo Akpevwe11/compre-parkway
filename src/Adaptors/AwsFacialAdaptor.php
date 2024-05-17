@@ -9,6 +9,11 @@ use Stanliwise\CompreParkway\Contract\FaceTech\FaceVerificationService;
 
 class AwsFacialAdaptor implements Adaptor
 {
+    public function getName()
+    {
+        return 'aws';
+    }
+
     public function facialRecognitionService(): FaceRecognitionService
     {
         return app('compreFace.aws.faceRecognition');

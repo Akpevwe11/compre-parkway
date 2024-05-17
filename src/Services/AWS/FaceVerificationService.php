@@ -37,9 +37,9 @@ class FaceVerificationService extends BaseService implements FaceTechFaceVerific
         return $toArray;
     }
 
-    public function compareTwoFileImages(File $source_image, File $target_image)
+    public function compareTwoFaceImages(File $source_image, File $target_image)
     {
-        (new FaceDetectionService)->detectFileImage($source_image);
+        (new FaceDetectionService)->detectFace($source_image);
 
         $response = $this->getHttpClient()->compareFaces([
             'SimilarityThreshold' => (config('compreFace.trust_threshold') * 100),
@@ -50,10 +50,7 @@ class FaceVerificationService extends BaseService implements FaceTechFaceVerific
                 'Bytes' => $target_image->getContent(),
             ]
         ]);
-        return $this->handleHttpResponse($response);
-    }
 
-    public function compareTwoBas64Images(Base64File $source_image, Base64File $target_image)
-    {
+        return $this->handleHttpResponse($response);
     }
 }

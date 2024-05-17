@@ -2,7 +2,6 @@
 
 namespace Stanliwise\CompreParkway\Services\AWS;
 
-use Stanliwise\CompreParkway\Adaptors\File\Base64File;
 use Stanliwise\CompreParkway\Contract\FaceTech\FaceRecognitionService as FaceTechFaceRecognitionService;
 use Stanliwise\CompreParkway\Contract\File;
 use Stanliwise\CompreParkway\Contract\Subject;
@@ -25,7 +24,7 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
     public function enrollSubject(Subject $subject)
     {
         $response = $this->getHttpClient()->createUser([
-            "ClientRequestToken" => (string) $subject->getUniqueID() . config('compreFace.aws_collection_id'),
+            "ClientRequestToken" => $subject->getUniqueID() . config('compreFace.aws_collection_id'),
             'CollectionId' => config('compreFace.aws_collection_id'),
             'UserId' => "{$subject->getUniqueID()}",
         ]);
@@ -34,7 +33,7 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
             return true;
     }
 
-    public function getAlifeSessionID()
+    public function getLiveSessionID()
     {
         $response = $this->getHttpClient()->createFaceLivenessSession([]);
 
@@ -55,12 +54,12 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
 
 
 
-    public function addImage(Subject $subject, File $file)
+    public function addFaceImage(Subject $subject, File $file)
     {
         $indexFaceResponse = $this->getHttpClient()->indexFaces([
             "CollectionId" => config('compreFace.aws_collection_id'),
             "DetectionAttributes" => ["ALL"],
-            "ExternalImageId" => $uid = $file->getFilename() . $subject->getUniqueID(),
+            "ExternalImageId" => $uid = $file->getFilename() . $file,
             "Image" => [
                 "Bytes" => $file->getContent()
             ],
@@ -111,20 +110,18 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
         return $faceDetails + ["image_uuid" => $face_id, 'similarity_threshold' => $similarity_threshold];
     }
 
-    public function addImageBase64(Subject $subject, Base64File $file)
-    {
-    }
-
     public function disenrollSubject(Subject $subject)
     {
         $response = $this->getHttpClient()->deleteUser([
             "ClientRequestToken" => "string",
             "CollectionId" => "string",
-            "UserId" => $subject->getUniqueID(),
+            "UserId" => "{$subject->getUniqueID()}",
         ]);
+
+        return $response->toArray();
     }
 
-    public function removeImage(string $image_uuid)
+    public function removeFaceImage(string $image_uuid)
     {
         $response = $this->getHttpClient()->deleteFaces([
             "CollectionId" => config('compreFace.aws_collection_id'),
@@ -134,12 +131,12 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
         return $response->toArray();
     }
 
-    public function removeFaceFromUser(Subject $subject, $image_uuid)
+    public function removeFaceFromUser(string $subject_uuid, string $image_uuid)
     {
         $response = $this->getHttpClient()->disassociateFaces([]);
     }
 
-    public function removeAllImages(Subject $subject)
+    public function removeAllFaceImages(Subject $subject)
     {
     }
 
@@ -170,12 +167,16 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
         return $response->toArray();
     }
 
-    public function verifyFileImageAgainstSubjectRemoteExample(Subject $subject, File $source, string $remoteTargetUUID)
+    public function verifyFaceImageAgainstASubject(Subject $subject, File $source)
     {
-        $response = $this->getHttpClient()->searchUsersByImage([]);
-    }
+        $response = $this->getHttpClient()->searchUsersByImage([
+            "CollectionId" => config('compreFace.aws_collection_id'),
+            "Image" => $source->getContent(),
+            "QualityFilter" => 'AUTO',
+            "MaxUsers" => 1,
+            "UserMatchThreshold" => (config('compreFace.trust_threshold') * 100),
+        ]);
 
-    public function verifyBase64ImageAgainstSubjectRemoteExample(Subject $subject, Base64File $base64Source, string $remoteTargetUUID)
-    {
+        return $response->toArray();
     }
 }

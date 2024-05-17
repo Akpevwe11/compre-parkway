@@ -63,13 +63,13 @@ class ParkwayFaceTechService
 
     protected function addExample(Subject $subject, File $image_file, string $type = 'secondary', ?string $disk = 'local')
     {
-        return tap($this->getfacialRecognitionService()->addImage($subject, $image_file), function ($response) use ($subject, $image_file, $disk, $type) {
+        return tap($this->getfacialRecognitionService()->addFaceImage($subject, $image_file), function ($response) use ($subject, $image_file, $disk, $type) {
             $relative_path = $image_file->getFilename();
 
             $subject->examples()->create([
                 'is_primary' => ($type == 'primary') ? true : false,
                 'response_payload' => $response,
-                'provider' => config('compreFace.driver_name'),
+                'provider' => $this->driver->getName(),
                 'image_uuid' => $response['image_uuid'],
                 'response_payload' => $response,
                 'image_path' => $relative_path,
@@ -108,26 +108,26 @@ class ParkwayFaceTechService
         if ($example->is_primary)
             throw new Exception('Cannot remove Primary Model, Disenroll or remove all exmaples of Example');
 
-        tap($this->getfacialRecognitionService()->removeImage($example->image_uuid), function () use ($example) {
+        tap($this->getfacialRecognitionService()->removeFaceImage($example->image_uuid), function () use ($example) {
             $example->delete();
         });
     }
 
     public function removeAllExamples(Subject $subject)
     {
-        $this->getfacialRecognitionService()->removeAllImages($subject);
+        $this->getfacialRecognitionService()->removeAllFaceImages($subject);
         $subject->examples()->delete();
         $subject->refresh();
     }
 
     public function detectFileImage(File $image)
     {
-        return $this->getFacialDetectionService()->detectFileImage($image);
+        return $this->getFacialDetectionService()->detectFace($image);
     }
 
     public function compareTwoFileImages(File $sourceImage, File $targeImage)
     {
-        return $this->getfacialVerificationService()->compareTwoFileImages($sourceImage, $targeImage);
+        return $this->getfacialVerificationService()->compareTwoFaceImages($sourceImage, $targeImage);
     }
 
     public function getFacialRecognitionService()

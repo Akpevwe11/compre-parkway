@@ -19,7 +19,6 @@ use Stanliwise\CompreParkway\Contract\FaceTech\FaceVerificationService;
  * @method static mixed enroll(Subject, File $image_file, ?string $disk_drive = 'local')
  * @method static mixed disenroll(Subject $subject)
  * @method static void addSecondaryExample(Subject $subject, File $image_file, string $disk = 'local')
- * @method static mixed addExample(Subject $subject, File $image_file, string $type = 'secondary', ?string $disk = 'local')
  * @method static array detectFileImage(File $image)
  * @method static array compareTwoFileImages(File $sourceImage, File $targeImage)
  * @method static FaceRecognitionService getFacialRecognitionService()
