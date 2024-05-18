@@ -3,6 +3,8 @@
 namespace Stanliwise\CompreParkway\Traits;
 
 use Stanliwise\CompreParkway\Adaptors\File\ImageFile;
+use Stanliwise\CompreParkway\Contract\File;
+use Stanliwise\CompreParkway\Facade\FaceTech;
 use Stanliwise\CompreParkway\Models\Example;
 use Stanliwise\CompreParkway\Services\ParkwayFaceTechService;
 
@@ -31,8 +33,13 @@ trait HasFacialBiometrics
         return $this->morphMany(Example::class, 'exampleable');
     }
 
-    public function enroll(string $image_path)
+    public function addFaceImage(File $file, $driver = 'local')
     {
-        return ParkwayFaceTechService::instance()->enroll($this, new ImageFile($image_path));
+        return FaceTech::addSecondaryExample($this, $file, $driver);
+    }
+
+    public function enroll(File $file)
+    {
+        return FaceTech::enroll($this, $file);
     }
 }
