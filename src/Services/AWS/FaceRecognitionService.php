@@ -57,7 +57,7 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
         $indexFaceResponse = $this->getHttpClient()->indexFaces([
             'CollectionId' => config('compreFace.aws_collection_id'),
             'DetectionAttributes' => ['ALL'],
-            'ExternalImageId' => $uid = $file->getFilename().$file,
+            'ExternalImageId' => $uid = $file->getFilename(),
             'Image' => [
                 'Bytes' => $file->getContent(),
             ],
