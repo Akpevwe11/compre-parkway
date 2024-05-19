@@ -71,6 +71,7 @@ class ParkwayFaceTechService
             $subject->examples()->create([
                 'is_primary' => ($type == 'primary') ? true : false,
                 'response_payload' => $response,
+                'tag' => $image_file->getTag(),
                 'provider' => $this->driver->getName(),
                 'image_uuid' => $response['image_uuid'],
                 'response_payload' => $response,

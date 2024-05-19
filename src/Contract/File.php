@@ -11,4 +11,6 @@ interface File
     public function getPath();
 
     public function path();
+
+    public function getTag(): string;
 }
