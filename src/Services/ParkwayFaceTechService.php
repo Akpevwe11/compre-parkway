@@ -56,6 +56,7 @@ class ParkwayFaceTechService
 
     public function addSecondaryExample(Subject $subject, File $image_file, string $disk = 'local')
     {
+        $subject->refresh();
         if ($this->hasEnrolled($subject) == false) {
             throw new Exception('Subject not enrolled properly');
         }
