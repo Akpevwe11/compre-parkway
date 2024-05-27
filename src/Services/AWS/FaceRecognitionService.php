@@ -53,7 +53,7 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
         //handle logic
     }
 
-    public function addFaceImage(Subject $subject, File $file)
+    public function addFaceImage(Subject $subject, File $file, $associate = true)
     {
         $indexFaceResponse = $this->getHttpClient()->indexFaces([
             'CollectionId' => config('compreFace.aws_collection_id'),
@@ -99,14 +99,16 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
             'UserMatchThreshold' => $similarity_threshold = (config('compreFace.trust_threshold') * 100),
         ]);
 
-        $associatFaces = data_get($associatFaceResponse, 'AssociatedFaces');
+        if ($associate) {
+            $associatFaces = data_get($associatFaceResponse->toArray(), 'AssociatedFaces');
 
-        if (count($associatFaces) < 1) {
-            throw new FaceDoesNotMatch;
-        }
+            if (count($associatFaces) < 1) {
+                throw new FaceDoesNotMatch;
+            }
 
-        if (count($associatFaces) > 1) {
-            throw new MultipleFaceDetected;
+            if (count($associatFaces) > 1) {
+                throw new MultipleFaceDetected;
+            }
         }
 
         return $faceDetails + ['image_uuid' => $face_id, 'similarity_threshold' => $similarity_threshold];

@@ -48,7 +48,7 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
         return $this->handleFaceHttpResponse($response);
     }
 
-    public function addFaceImage($subject_uuid, File $file)
+    public function addFaceImage($subject_uuid, File $file, $shouldAssociate = true)
     {
         $file = ($file instanceof ImageFile) ? $file->toBase64File() : $file;
 

@@ -11,7 +11,7 @@ interface FaceRecognitionService
 
     public function disenrollSubject(Subject $subject_uuid);
 
-    public function addFaceImage(Subject $subject_uuid, File $file);
+    public function addFaceImage(Subject $subject_uuid, File $file, $shouldAssociate = true);
 
     public function removeAllFaceImages(Subject $subject_uuid);
 

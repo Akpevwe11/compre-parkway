@@ -75,22 +75,37 @@ class ParkwayFaceTechService
             $this->getfacialRecognitionService()->enrollSubject($subject);
         }
 
-        $this->addPrimaryExample($subject, $image_file, false, $disk_drive);
+        if ($subject->primaryExample) {
+            throw new SubjectNameAlreadyExist;
+        }
+
+        return $this->addExample($subject, $image_file, 'primary', $disk_drive, ! $enrolled);
     }
 
     public function addSecondaryExample(Subject $subject, File $image_file, string $disk = 'local')
     {
         $subject->refresh();
+
         if ($this->hasEnrolled($subject) == false) {
             throw new Exception('Subject not enrolled properly');
         }
 
-        $this->addExample($subject, $image_file, 'seconeary', $disk);
+        //but if the user has been indexed then set base on id
+        try {
+            $face_uuid = $this->userHasBeenIndexed($image_file);
+            $image_already_indexed = $face_uuid == $subject->getUniqueID();
+        } catch (FaceHasNotBeenIndexed $th) {
+            if (app()->runningUnitTests()) {
+                logger($th);
+            }
+        }
+
+        $this->addExample($subject, $image_file, 'secondary', $disk, ! $image_already_indexed);
     }
 
-    protected function addExample(Subject $subject, File $image_file, string $type = 'secondary', ?string $disk = 'local')
+    protected function addExample(Subject $subject, File $image_file, string $type = 'secondary', ?string $disk = 'local', $shouldAssociate = true)
     {
-        return tap($this->getfacialRecognitionService()->addFaceImage($subject, $image_file), function ($response) use ($subject, $image_file, $disk, $type) {
+        return tap($this->getfacialRecognitionService()->addFaceImage($subject, $image_file, $shouldAssociate), function ($response) use ($subject, $image_file, $disk, $type) {
             $relative_path = $image_file->getFilename();
 
             $subject->examples()->create([
@@ -104,24 +119,6 @@ class ParkwayFaceTechService
                 'storage_driver' => $disk,
             ]);
         });
-    }
-
-    protected function addPrimaryExample(Subject $subject, File $image_file, bool $reset, $disk)
-    {
-        if ($reset) {
-            $this->removeAllExamples($subject);
-        }
-
-        if ($subject->primaryExample) {
-            throw new SubjectNameAlreadyExist;
-        }
-
-        //TODO: check there is no image remotely
-
-        //if there is then remove all other samples
-
-        //self::facialDetectionService()->detectFileImage($image_file);
-        return $this->addExample($subject, $image_file, 'primary', $disk);
     }
 
     public function disenroll(Subject $subject)
