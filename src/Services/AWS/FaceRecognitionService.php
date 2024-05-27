@@ -24,7 +24,7 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
     public function enrollSubject(Subject $subject)
     {
         $response = $this->getHttpClient()->createUser([
-            'ClientRequestToken' => $subject->getUniqueID() . config('compreFace.aws_collection_id'),
+            'ClientRequestToken' => $subject->getUniqueID().config('compreFace.aws_collection_id'),
             'CollectionId' => config('compreFace.aws_collection_id'),
             'UserId' => "{$subject->getUniqueID()}",
         ]);
@@ -77,7 +77,7 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
         /** @var array */
         $firstFace = $faceRecords[0] ?? null;
 
-        if (!$firstFace) {
+        if (! $firstFace) {
             throw new NoFaceWasDetected;
         }
 
@@ -92,7 +92,7 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
 
         //associate Face
         $associatFaceResponse = $this->getHttpClient()->associateFaces([
-            'ClientRequestToken' => $subject->getUniqueID() . $face_id,
+            'ClientRequestToken' => $subject->getUniqueID().$face_id,
             'CollectionId' => config('compreFace.aws_collection_id'),
             'FaceIds' => [$face_id],
             'UserId' => "{$subject->getUniqueID()}",
@@ -186,7 +186,7 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
         $userMatches = data_get($arrayResponse, 'UserMatches');
         $similarity_threshold = data_get($userMatches, '0.Similarity');
 
-        if (!$similarity_threshold || ($similarity_threshold < $accepted_threshold)) {
+        if (! $similarity_threshold || ($similarity_threshold < $accepted_threshold)) {
             throw new FaceDoesNotMatch;
         }
 
@@ -218,16 +218,18 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
         $arrayResponse = $response->toArray();
         $faceMatches = data_get($arrayResponse, 'UserMatches');
 
-        if (count($faceMatches) < 1)
+        if (count($faceMatches) < 1) {
             throw new FaceHasNotBeenIndexed;
+        }
 
         // if (count($faceMatches) > 1)
         //     throw new MultipleFaceDetected;
 
         $similarity = data_get($faceMatches, '0.Similarity');
 
-        if ($similarity < $accepted_threshold)
+        if ($similarity < $accepted_threshold) {
             throw new FaceHasNotBeenIndexed;
+        }
 
         return data_get($faceMatches, '0.User.UserId');
     }

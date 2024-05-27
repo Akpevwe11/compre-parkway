@@ -56,6 +56,7 @@ class ParkwayFaceTechService
             throw new SubjectAlreadyEnrolled;
         }
 
+        $enrolled = false;
         $subject->setfacialUUID((string) \Illuminate\Support\Str::uuid());
 
         //but if the user has been indexed then set base on id
@@ -63,12 +64,17 @@ class ParkwayFaceTechService
             $face_uuid = $this->userHasBeenIndexed($image_file);
             $subject->setfacialUUID($face_uuid);
             $subject->refresh();
+            $enrolled = true;
         } catch (FaceHasNotBeenIndexed $th) {
-            if (app()->runningUnitTests())
+            if (app()->runningUnitTests()) {
                 logger($th);
+            }
         }
 
-        $this->getfacialRecognitionService()->enrollSubject($subject);
+        if ($enrolled == false) {
+            $this->getfacialRecognitionService()->enrollSubject($subject);
+        }
+
         $this->addPrimaryExample($subject, $image_file, false, $disk_drive);
     }
 

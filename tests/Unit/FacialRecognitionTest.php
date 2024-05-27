@@ -13,7 +13,6 @@ use Stanliwise\CompreParkway\Exceptions\NoFaceWasDetected;
 use Stanliwise\CompreParkway\Facade\FaceTech;
 use Tests\App\Models\User;
 use Tests\TestCase;
-use Throwable;
 
 class FacialRecognitionTest extends TestCase
 {
