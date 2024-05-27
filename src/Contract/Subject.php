@@ -10,6 +10,11 @@ interface Subject
     public function getUniqueID();
 
     /**
+     * @return void
+     */
+    public function setfacialUUID(string $uuid);
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphOne
      */
     public function primaryExample();

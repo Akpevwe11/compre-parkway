@@ -6,6 +6,7 @@ use Exception;
 use Stanliwise\CompreParkway\Contract\FaceTech\Adaptor;
 use Stanliwise\CompreParkway\Contract\File;
 use Stanliwise\CompreParkway\Contract\Subject;
+use Stanliwise\CompreParkway\Exceptions\FaceHasNotBeenIndexed;
 use Stanliwise\CompreParkway\Exceptions\SubjectAlreadyEnrolled;
 use Stanliwise\CompreParkway\Exceptions\SubjectNameAlreadyExist;
 use Stanliwise\CompreParkway\Models\Example;
@@ -29,7 +30,7 @@ class ParkwayFaceTechService
         return $this->driver;
     }
 
-    public function setDriver(\Stanliwise\CompreParkway\Contract\FaceTech\Adaptor $adaptor)
+    public function setDriver(Adaptor $adaptor)
     {
         $this->driver = $adaptor;
     }
@@ -44,10 +45,27 @@ class ParkwayFaceTechService
         return (bool) $subject->primaryExample;
     }
 
+    public function userHasBeenIndexed(File $file)
+    {
+        return $this->getFacialRecognitionService()->findUserUsingImage($file);
+    }
+
     public function enroll(Subject $subject, File $image_file, ?string $disk_drive = 'local')
     {
         if ($this->hasEnrolled($subject)) {
             throw new SubjectAlreadyEnrolled;
+        }
+
+        $subject->setfacialUUID((string) \Illuminate\Support\Str::uuid());
+
+        //but if the user has been indexed then set base on id
+        try {
+            $face_uuid = $this->userHasBeenIndexed($image_file);
+            $subject->setfacialUUID($face_uuid);
+            $subject->refresh();
+        } catch (FaceHasNotBeenIndexed $th) {
+            if (app()->runningUnitTests())
+                logger($th);
         }
 
         $this->getfacialRecognitionService()->enrollSubject($subject);
@@ -75,7 +93,6 @@ class ParkwayFaceTechService
                 'tag' => $image_file->getTag(),
                 'provider' => $this->driver->getName(),
                 'image_uuid' => $response['image_uuid'],
-                'response_payload' => $response,
                 'image_path' => $relative_path,
                 'similarity_score' => ($type == 'primary') ? null : $response['similarity_threshold'],
                 'storage_driver' => $disk,

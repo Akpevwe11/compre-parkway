@@ -8,6 +8,7 @@ use Stanliwise\CompreParkway\Contract\File;
 class Base64File implements File
 {
     protected string $base64;
+
     protected string $tag;
 
     public function __construct(string $base64)

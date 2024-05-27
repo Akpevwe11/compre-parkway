@@ -75,4 +75,9 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
 
         return $this->handleFaceHttpResponse($response);
     }
+
+    public function findUserUsingImage(File $image): string
+    {
+        return '';
+    }
 }

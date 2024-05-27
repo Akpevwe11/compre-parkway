@@ -2,22 +2,12 @@
 
 namespace Stanliwise\CompreParkway\Traits;
 
-use Stanliwise\CompreParkway\Adaptors\File\ImageFile;
 use Stanliwise\CompreParkway\Contract\File;
 use Stanliwise\CompreParkway\Facade\FaceTech;
 use Stanliwise\CompreParkway\Models\Example;
-use Stanliwise\CompreParkway\Services\ParkwayFaceTechService;
 
 trait HasFacialBiometrics
 {
-    /**
-     * @return mixed
-     */
-    public function getUniqueID()
-    {
-        return $this->id;
-    }
-
     public function primaryExample()
     {
         return $this->morphOne(Example::class, 'exampleable')->where('is_primary', true);

@@ -16,9 +16,6 @@ class Example extends Model
         'response_payload' => 'array',
     ];
 
-    /**
-     * @return \Stanliwise\CompreParkway\Contract\Subject
-     */
     public function subject()
     {
         return $this->morphTo();

@@ -3,11 +3,11 @@
 namespace Stanliwise\CompreParkway\Facade;
 
 use Illuminate\Support\Facades\Facade;
-use Stanliwise\CompreParkway\Contract\File;
 use Stanliwise\CompreParkway\Contract\FaceTech\Adaptor;
 use Stanliwise\CompreParkway\Contract\FaceTech\FaceDetectionService;
 use Stanliwise\CompreParkway\Contract\FaceTech\FaceRecognitionService;
 use Stanliwise\CompreParkway\Contract\FaceTech\FaceVerificationService;
+use Stanliwise\CompreParkway\Contract\File;
 use Stanliwise\CompreParkway\Contract\Subject;
 
 /**

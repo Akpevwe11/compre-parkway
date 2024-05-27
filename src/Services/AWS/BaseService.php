@@ -22,7 +22,7 @@ abstract class BaseService
             self::$awsClient->getHandlerList()->appendSign(
                 Middleware::mapResult(function (ResultInterface $result) {
                     if (app()->environment('testing')) {
-                        dump(json_encode($result->toArray()));
+                        //dump(json_encode($result->toArray()));
                     }
 
                     return $result;

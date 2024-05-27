@@ -18,4 +18,6 @@ interface FaceRecognitionService
     public function removeFaceImage(string $image_uuid);
 
     public function verifyFaceImageAgainstASubject(Subject $subject_uuid, File $image);
+
+    public function findUserUsingImage(File $image): string;
 }
