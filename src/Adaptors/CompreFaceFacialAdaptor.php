@@ -11,7 +11,7 @@ class CompreFaceFacialAdaptor implements Adaptor
 {
     public function getName()
     {
-        return 'compreFace';
+        return self::class;
     }
 
     public function facialRecognitionService(): FaceRecognitionService

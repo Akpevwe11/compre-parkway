@@ -90,16 +90,16 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
             throw new NoFaceWasDetected;
         }
 
-        //associate Face
-        $associatFaceResponse = $this->getHttpClient()->associateFaces([
-            'ClientRequestToken' => $subject->getUniqueID().$face_id,
-            'CollectionId' => config('compreFace.aws_collection_id'),
-            'FaceIds' => [$face_id],
-            'UserId' => "{$subject->getUniqueID()}",
-            'UserMatchThreshold' => $similarity_threshold = (config('compreFace.trust_threshold') * 100),
-        ]);
-
         if ($associate) {
+            //associate Face
+            $associatFaceResponse = $this->getHttpClient()->associateFaces([
+                'ClientRequestToken' => $subject->getUniqueID().$face_id,
+                'CollectionId' => config('compreFace.aws_collection_id'),
+                'FaceIds' => [$face_id],
+                'UserId' => "{$subject->getUniqueID()}",
+                'UserMatchThreshold' => $similarity_threshold = (config('compreFace.trust_threshold') * 100),
+            ]);
+
             $associatFaces = data_get($associatFaceResponse->toArray(), 'AssociatedFaces');
 
             if (count($associatFaces) < 1) {

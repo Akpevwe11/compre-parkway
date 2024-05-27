@@ -18,6 +18,11 @@ abstract class BaseService
         return implode(',', ['age', 'gender', 'landmarks', 'mask', 'pose']);
     }
 
+    public static function removeAfterQuote(string $input)
+    {
+        return strstr($input, '"', true) ?: $input;
+    }
+
     protected function handleFaceHttpResponse(Response $response): array
     {
         try {

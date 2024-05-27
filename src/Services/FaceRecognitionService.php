@@ -2,10 +2,13 @@
 
 namespace Stanliwise\CompreParkway\Services;
 
+use Illuminate\Support\Arr;
 use Stanliwise\CompreParkway\Adaptors\File\ImageFile;
 use Stanliwise\CompreParkway\Contract\FaceTech\FaceRecognitionService as FaceTechFaceRecognitionService;
 use Stanliwise\CompreParkway\Contract\File;
 use Stanliwise\CompreParkway\Contract\Subject;
+use Stanliwise\CompreParkway\Exceptions\FaceHasNotBeenIndexed;
+use Stanliwise\CompreParkway\Exceptions\MultipleFaceDetected;
 
 class FaceRecognitionService extends BaseService implements FaceTechFaceRecognitionService
 {
@@ -48,18 +51,24 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
         return $this->handleFaceHttpResponse($response);
     }
 
-    public function addFaceImage($subject_uuid, File $file, $shouldAssociate = true)
+    public function addFaceImage(Subject $subject, File $file, $shouldAssociate = true)
     {
         $file = ($file instanceof ImageFile) ? $file->toBase64File() : $file;
 
         $response = $this->getHttpClient()->asJson()->post('api/v1/recognition/faces?'.http_build_query([
-            'subject' => $subject_uuid,
+            'subject' => $subject->getUniqueID(),
             'det_prob_threshold' => config('compreFace.trust_threshold'),
         ]), [
-            'file' => (string) $file,
+            'file' => parent::removeAfterQuote((string) $file),
         ]);
 
-        return $this->handleFaceHttpResponse($response);
+        $array_response = $this->handleFaceHttpResponse($response);
+
+        $image_id = data_get($array_response, 'image_id');
+        $array_response['image_uuid'] = $image_id;
+        $array_response['similarity_threshold'] = config('compreFace.trust_threshold');
+
+        return $array_response;
     }
 
     public function verifyFaceImageAgainstASubject(Subject $subject, File $file)
@@ -71,13 +80,31 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
             'subject' => $subject->getUniqueID(),
             'face_plugins' => $this->getPlugings(),
             'det_prob_threshold' => config('compreFace.trust_threshold'),
-        ]), ['file' => (string) $file]);
+        ]), ['file' => parent::removeAfterQuote((string) $file)]);
 
         return $this->handleFaceHttpResponse($response);
     }
 
-    public function findUserUsingImage(File $image): string
+    public function findUserUsingImage(File $file): string
     {
-        return '';
+        $file = ($file instanceof ImageFile) ? $file->toBase64File() : $file;
+        $response = $this->getHttpClient()->asJson()->post('api/v1/recognition/recognize?'.http_build_query([
+            'face_plugins' => $this->getPlugings(),
+            'det_prob_threshold' => config('compreFace.trust_threshold'),
+        ]), ['file' => parent::removeAfterQuote((string) $file)]);
+
+        $toArray = (array) $response->json();
+
+        $subject = Arr::get($toArray, 'result.0.subjects');
+
+        if (count($subject) == 0) {
+            throw new FaceHasNotBeenIndexed;
+        }
+
+        if (count($subject) > 1) {
+            throw new MultipleFaceDetected;
+        }
+
+        return data_get($subject, '0.subject');
     }
 }

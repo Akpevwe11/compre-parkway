@@ -7,10 +7,12 @@ use Aws\Result;
 use GuzzleHttp\Promise\Create;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Psr\Http\Message\RequestInterface;
+use Stanliwise\CompreParkway\Adaptors\CompreFaceFacialAdaptor;
 use Stanliwise\CompreParkway\Adaptors\File\ImageFile;
 use Stanliwise\CompreParkway\Exceptions\FaceDoesNotMatch;
 use Stanliwise\CompreParkway\Exceptions\NoFaceWasDetected;
 use Stanliwise\CompreParkway\Facade\FaceTech;
+use Stanliwise\CompreParkway\Services\AWS\FaceDetectionService;
 use Tests\App\Models\User;
 use Tests\TestCase;
 
@@ -157,5 +159,18 @@ class FacialRecognitionTest extends TestCase
     {
         $response = FaceTech::getFacialRecognitionService()->findUserUsingImage(new ImageFile(base_path('Images/1.png')));
         $this->assertIsString($response);
+    }
+
+    public function test_delete_face()
+    {
+    //    $response =  (new FaceDetectionService)->getHttpClient()->deleteUser([
+    //         'ClientRequestToken' => uniqid(),
+    //         'CollectionId' => config('compreFace.aws_collection_id'),
+    //         'UserId'=> '1',
+    //     ]);
+
+    //     dump($response);
+
+        dump(CompreFaceFacialAdaptor::class);
     }
 }

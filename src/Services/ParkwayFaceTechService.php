@@ -90,6 +90,8 @@ class ParkwayFaceTechService
             throw new Exception('Subject not enrolled properly');
         }
 
+        //driver must be picked from primary driver
+
         //but if the user has been indexed then set base on id
         try {
             $face_uuid = $this->userHasBeenIndexed($image_file);

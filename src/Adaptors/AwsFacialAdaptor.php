@@ -11,7 +11,7 @@ class AwsFacialAdaptor implements Adaptor
 {
     public function getName()
     {
-        return 'aws';
+        return self::class;
     }
 
     public function facialRecognitionService(): FaceRecognitionService
