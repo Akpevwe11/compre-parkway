@@ -111,7 +111,7 @@ class FaceRecognitionService extends BaseService implements FaceTechFaceRecognit
             }
         }
 
-        return $faceDetails + ['image_uuid' => $face_id, 'similarity_threshold' => $similarity_threshold];
+        return $faceDetails + ['image_uuid' => $face_id, 'similarity_threshold' => $similarity_threshold = (config('compreFace.trust_threshold') * 100)];
     }
 
     public function disenrollSubject(Subject $subject)
