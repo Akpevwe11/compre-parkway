@@ -57,7 +57,7 @@ class ParkwayFaceTechService
         }
 
         $enrolled = false;
-        $subject->setfacialUUID((string) \Illuminate\Support\Str::uuid());
+        $subject->setfacialUUID((string) uniqid());
 
         //but if the user has been indexed then set base on id
         try {
