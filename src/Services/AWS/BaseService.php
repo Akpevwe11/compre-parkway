@@ -21,8 +21,8 @@ abstract class BaseService
 
             self::$awsClient->getHandlerList()->appendSign(
                 Middleware::mapResult(function (ResultInterface $result) {
-                    if (app()->environment('testing')) {
-                        //dump(json_encode($result->toArray()));
+                    if (config('compreFace.debug') == true) {
+                        logger($result->toArray());
                     }
 
                     return $result;
