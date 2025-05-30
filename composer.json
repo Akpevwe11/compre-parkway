@@ -18,12 +18,12 @@
     ],
     "minimum-stability": "dev",
     "require-dev": {
-        "phpunit/phpunit": "9.6.x-dev",
+        "phpunit/phpunit": "^11.0",
         "mockery/mockery": "1.7.x-dev"
     },
     "require": {
         "aws/aws-sdk-php": "3.306.0",
-        "laravel/framework": "^9.0",
+        "laravel/framework": "^12.0",
         "fakerphp/faker": "^1.22"
     },
     "extra": {
