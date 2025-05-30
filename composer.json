@@ -23,7 +23,7 @@
     },
     "require": {
         "aws/aws-sdk-php": "3.306.0",
-        "laravel/framework": "^12.0",
+        "laravel/framework": "^8.75|9.0|10.0|11.0|12.0",
         "fakerphp/faker": "^1.22"
     },
     "extra": {
